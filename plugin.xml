@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://plugin.powerschool.pearson.com"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        description="Enhanced Custom Page Management plugin for PowerSchool."
+        name="Enhanced CPM"
+        version="1.0.2"
+        xsi:schemaLocation="http://plugin.powerschool.pearson.com
+        plugin.xsd">
+    <oauth/>
+    <links>
+        <link
+                title="Enhanced Custom Page Management plugin for PowerSchool"
+                display-text="Enhanced CPM"
+                path="/admin/ecpm/home.html">
+            <ui_contexts>
+                <ui_context id="admin.left_nav"/>
+                <ui_context id="admin.header"/>
+            </ui_contexts>
+        </link>
+    </links>
+    <publisher name="Kaelon Egan and Lorenzo Lopez">
+        <contact email="ecpmPowerschool@gmail.com"/>
+    </publisher>
+</plugin>

@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html id="ng-app">
+<head>
+    <title>Enhanced PowerSchool Custom Page Management BETA</title>
+    <!-- required scripts -->
+    ~[wc:commonscripts]
+    <!-- Required style sheets: screen.css, and print.css -->
+    <link href="/images/css/screen.css" rel="stylesheet" media="screen">
+    <link href="/images/css/print.css" rel="stylesheet" media="print">
+    <link href="/scripts/ecpm/ext/jstree/themes/default/style.min.css" rel="stylesheet">
+    <link href="/scripts/ecpm/ext/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        html, body { background:#ebebeb; font-size:10px; font-family:Verdana; margin:0; padding:0; }
+        #container { min-width:320px; margin:0px auto 0 auto; background:white; border-radius:0px; padding:0px; overflow:hidden; }
+
+        #data { margin-left:320px; }
+        #data textarea { margin:0; padding:0; height:100%; width:100%; border:0; background:white; display:block; line-height:18px; resize:none; }
+        #data, #code { font: normal normal normal 12px/18px 'Consolas', monospace !important; }
+
+        #siteTree .folder { background:url('/scripts/ecpm/ext/jstree/themes/default/file_sprite2.png') right bottom no-repeat; }
+        #siteTree .folder-custom {
+            background-position: -505px -18px;
+        }
+        #siteTree .file { background:url('/scripts/ecpm/ext/jstree/themes/default/file_sprite2.png') 0 0 no-repeat; }
+        #siteTree .file-pdf { background-position: -32px 0 }
+        #siteTree .file-as { background-position: -36px 0 }
+        #siteTree .file-c { background-position: -72px -0px }
+        #siteTree .file-iso { background-position: -108px -0px }
+        #siteTree .file-htm, #siteTree .file-html, #siteTree .file-xml, #siteTree .file-xsl { background-position: -126px -0px }
+        #siteTree .file-cf { background-position: -162px -0px }
+        #siteTree .file-cpp { background-position: -216px -0px }
+        #siteTree .file-cs { background-position: -236px -0px }
+        #siteTree .file-sql { background-position: -272px -0px }
+        #siteTree .file-xls, #siteTree .file-xlsx { background-position: -362px -0px }
+        #siteTree .file-h { background-position: -488px -0px }
+        #siteTree .file-crt, #siteTree .file-pem, #siteTree .file-cer { background-position: -452px -18px }
+        #siteTree .file-php { background-position: -108px -18px }
+        #siteTree .file-jpg, #siteTree .file-jpeg, #siteTree .file-png, #siteTree .file-gif, #siteTree .file-bmp { background-position: -126px -18px }
+        #siteTree .file-ppt, #siteTree .file-pptx { background-position: -144px -18px }
+        #siteTree .file-rb { background-position: -180px -18px }
+        #siteTree .file-text, #siteTree .file-txt, #siteTree .file-md, #siteTree .file-log, #siteTree .file-htaccess { background-position: -254px -18px }
+        #siteTree .file-doc, #siteTree .file-docx { background-position: -362px -18px }
+        #siteTree .file-zip, #siteTree .file-gz, #siteTree .file-tar, #siteTree .file-rar { background-position: -416px -18px }
+        #siteTree .file-js { background-position: -434px -18px }
+        #siteTree .file-css { background-position: -144px -0px }
+        #siteTree .file-fla, #siteTree .file-swf { background-position: -398px -0px }
+
+        #siteTree .custom-asset {
+            color: blue;
+        }
+
+        .jstree-contextmenu {
+            z-index: 99999;
+        }
+    </style>
+    <style type="text/css" media="screen">
+        .editor-main-fullscreen {
+            position: absolute;
+            top: 25px;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            height: 95%;
+            width: 100%;
+        }
+        body,html{width:100%;height:100%;padding:0;margin:0;}
+        .editor-main{
+            float: right;
+            position: absolute;
+            height:200px;
+            right: 0;
+            left:300px;
+            margin-top:25px;
+        }
+        .editor-toolbar{
+            background: #e8e8e8;
+            float: right;
+            position: absolute;
+            height:25px;
+            right: 0;
+            left:300px;
+        }
+        .editor-toolbar-fullscreen{
+            background: #e8e8e8;
+            position: absolute;
+            height:25px;
+        }
+        #sidebar{
+            width:300px;
+            float: left;
+            height:200px;
+            overflow-y: hidden;
+        }
+        #dragbar{
+            background-color:black;
+            height:100%;
+            float: right;
+            width: 1px;
+            cursor: col-resize;
+        }
+        #ghostbar{
+            width:3px;
+            background-color:#000;
+            opacity:0.5;
+            position:absolute;
+            cursor: col-resize;
+            z-index:999}
+
+        ul.tabs {
+            margin: 0px !important;
+        }
+    </style>
+    <style>
+        /*overrides*/
+        .jstree-default .jstree-node {
+            margin-left: 24px !important;
+        }
+        #siteTree {
+            overflow: scroll;
+        }
+        #content {
+            background-image: none !important;
+        }
+
+        .nav > li > a {
+            padding: 5px !important;
+        }
+
+        ul.nav-tabs {
+            margin: 0px !important;
+        }
+
+        .close {
+            font-size: 12px !important;
+            padding-left: 4px !important;
+            float: none !important;
+        }
+
+        ul > li {
+            list-style-type: none !important;
+        }
+
+        .feedback-confirm, .feedback-caution, .feedback-alert, .feedback-error, .feedback-note, .feedback-info {
+            margin: 0 !important;
+        }
+
+    </style>
+    <script>
+        var rnd = Math.floor(Math.random()*1E10);
+        require.config({
+            waitSeconds: 200,
+            paths: {
+                jstree: "ecpm/ext/jstree/jstree",
+                angularECPM: "ecpm/ext/angularjs/1.2.8/angular",
+                ace: "ecpm/ext/ace/ace",
+                bootstrap: "ecpm/ext/bootstrap/js/bootstrap.min",
+                uibootstrap: "ecpm/ext/angular-ui/ui-bootstrap-0-10-0",
+                ecpm: "ecpm/js/main"
+            },
+            urlArgs: "rnd=" + rnd
+        });
+
+        require(['jquery', 'angularECPM', 'jstree', 'ace'], function() {
+            //instantiation here
+            require(['bootstrap', 'uibootstrap', 'ecpm'], function() {
+                angular.bootstrap(document, ['ecpm']);
+            });
+        });
+    </script>
+</head>
+<body>
+~[wc:admin_header_css]
+<div id="breadcrumbs">
+    <!-- breadcrumb start --> Enhanced Custom Page Management<!-- breadcrumb end -->
+</div>
+</div></div>
+<div class="feedback-confirm" ng-show="feedback" ng-controller="feedbackCtrl">{{feedback}}</div>
+<div id="content" class="group">
+    <div id="sidebar">
+        <span id="position"></span>
+        <div id="dragbar"></div>
+        <div id="siteTree"></div>
+    </div>
+    <div id="editor-toolbar" class="editor-toolbar" ng-controller="toolbarCtrl">
+        <div class="btn-group">
+            <button class="btn btn-default btn-xs" type="button" id="btnPublish" ng-click="publishAsset()" title="Publish file immediately">Publish</button>
+            <button class="btn btn-default btn-xs" type="button" id="btnZoomOut" title="Decrease font size in editor"><span class="glyphicon glyphicon-zoom-out"></span></button>
+            <button class="btn btn-default btn-xs" type="button" id="btnZoomIn" title="Increase font size in editor"><span class="glyphicon glyphicon-zoom-in"></span></button>
+            <button class="btn btn-default btn-xs" type="button" id="btnSearch" title="Find / Replace in editor"><span class="glyphicon glyphicon-search"></span></button>
+            <button class="btn btn-default btn-xs" type="button" id="btnUndo" title="Undo editor changes"><span class="glyphicon glyphicon-backward"></span></button>
+            <button class="btn btn-default btn-xs" type="button" id="btnRedo" title="Redo editor changes"><span class="glyphicon glyphicon-forward"></span></button>
+            <button class="btn btn-default btn-xs" type="button" id="btnFullscreen" title="Full Screen Mode"><span class="glyphicon glyphicon-fullscreen"></span></button>
+            <button class="btn btn-default btn-xs" type="button" id="btnRegularscreen" title="Restore Regular Screen Mode"><span class="glyphicon glyphicon-resize-small"></span></button>
+        </div>
+        <!-- Code Snippet Menu -->
+        <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Code Snippets
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="snippet" id="Box" ng-click="insertSnippet('Box')">Box</a></li>
+                <li><a href="#" class="snippet" id="Tabs" ng-click="insertSnippet('Tabs')">Tabs</a></li>
+                <li><a href="#" class="snippet" id="DynamicTabs" ng-click="insertSnippet('DynamicTabs')">Dynamic Tabs</a></li>
+                <li><a href="#" class="snippet" id="Toggle" ng-click="insertSnippet('Toggle')">Toggle</a></li>
+                <li><a href="#" class="snippet" id="Dialog" ng-click="insertSnippet('Dialog')">Dialog</a></li>
+                <li><a href="#" class="snippet" id="Calendar" ng-click="insertSnippet('Calendar')">Calendar</a></li>
+                <li><a href="#" class="snippet" id="Table" ng-click="insertSnippet('Table')">Table</a></li>
+            </ul>
+        </div>
+        <!-- Page Template Menu -->
+        <div class="btn-group btn-group-xs">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                Page Templates
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#" class="template" id="Admin" ng-click="insertTemplate('Admin')">Admin</a></li>
+                <li><a href="#" class="template" id="AdminStudent" ng-click="insertTemplate('AdminStudent')">Admin Student</a></li>
+                <li><a href="#" class="template" id="Teacher" ng-click="insertTemplate('Teacher')">Teacher</a></li>
+                <li><a href="#" class="template" id="TeacherBackpack" ng-click="insertTemplate('TeacherBackpack')">Teacher Backpack</a></li>
+                <li><a href="#" class="template" id="Parent" ng-click="insertTemplate('Parent')">Parent</a></li>
+            </ul>
+
+        </div>
+        <button class="btn btn-default btn-xs" type="button" id="btnUpload" ng-click="importExportUtility()" title="Import/Export Custom Pages"><span class="glyphicon glyphicon-upload"></span></button>
+        <button class="btn btn-default btn-xs" type="button" id="btnAbout" ng-click="openAbout()">About ECPM</button>
+    </div>
+    <div id="main" ng-show="fileSelected" class="editor-main" ng-controller="editorCtrl">
+        <tabset>
+            <tab ng-repeat="tab in tabs" active="tab.active" disabled="tab.disabled" select="selectTab(tab)" title="{{tab.hover}}">
+                <tab-heading>
+                    <span>{{tab.title}}</span>
+                    <button type="button" tab-dismiss="$index" class="close"><span aria-hidden="true">&times;</span></button>
+                </tab-heading>
+            </tab>
+        </tabset>
+        <div id="editor"></div>
+    </div>
+    <div ng-show="!fileSelected" class="editor-main">Choose a file</div>
+</div>
+<!-- end of content area -->
+~[wc:admin_footer_css]
+
+<!--
+   we'll fix this code at some point
+-->
+<script type="text/javascript">
+    var editor, editorFontSize = 12;
+function resizeAce() {
+  return $j('#editor, #sidebar, #siteTree, #content').height($j(window).height() - 84);
+}
+
+function findText() {
+    var findText = $j('#textSearch').val();
+    editor.find(findText);
+    if ($j('#divFindReplaceResults.hide').length > 0) {
+        $j('#divFindReplaceResults.hide').addClass('hide');
+    }
+}
+
+function findAllText() {
+    var findText = $j('#textSearch').val();
+    var resultCount = editor.findAll(findText);
+    $j('#divFindReplaceResults').removeClass('hide').html(resultCount + ' results found.');
+}
+
+function replaceText() {
+    var findText = $j('#textSearch').val();
+    var replaceText = $j('#textReplace').val();
+    editor.replace(replaceText,findText);
+    if ($j('#divFindReplaceResults.hide').length > 0) {
+        $j('#divFindReplaceResults.hide').addClass('hide');
+    }
+}
+
+function replaceAllText() {
+    var findText = $j('#textSearch').val();
+    var replaceText = $j('#textReplace').val();
+    var replaceCount = editor.replaceAll(replaceText,findText);
+    $j('#divFindReplaceResults').removeClass('hide').html(replaceCount + ' results replaced.');
+}
+
+$j(window).resize(resizeAce);
+resizeAce();
+
+    $j(document).ready( function() {
+        loadingDialog('Loading ECPM... please wait');
+        //$j('#content').css('background-image', 'none');
+        $j('#btnRegularscreen').hide();
+
+
+        $j('#fontsize').change( function() {
+            var fontsize = parseInt($j(this).val());
+            editor.setFontSize(fontsize);
+        });
+
+        $j('#btnSearch').click( function() {
+            ace.config.loadModule('ace/ext/searchbox', function(e){e.Search(editor,true)})
+        });
+
+        $j('#btnUndo').click( function() {
+            editor.undo();
+        });
+
+        $j('#btnRedo').click( function() {
+            editor.redo();
+        });
+
+        $j('#btnZoomOut').click( function() {
+            if (editorFontSize > 10) {
+                editorFontSize = editorFontSize-2;
+            }
+            editor.setFontSize(editorFontSize);
+        });
+
+        $j('#btnZoomIn').click( function() {
+            if (editorFontSize < 36) {
+                editorFontSize = editorFontSize+2;
+            }
+            editor.setFontSize(editorFontSize);
+        });
+
+        $j('#btnFullscreen').click( function() {
+            $j('#btnRegularscreen').show();
+            $j('#btnFullscreen').hide();
+            $j('#main').prependTo('body').removeClass('editor-main').addClass('editor-main-fullscreen');
+            $j('#editor-toolbar').prependTo('body').removeClass('editor-toolbar').addClass('editor-toolbar-fullscreen');
+            $j('#container').hide();
+        });
+        
+        $j('#btnRegularscreen').click( function() {
+            $j('#btnFullscreen').show();
+            $j('#btnRegularscreen').hide();
+            $j('#main').insertAfter('#sidebar').removeClass('editor-main-fullscreen').addClass('editor-main');
+            $j('#editor-toolbar').insertAfter('#sidebar').removeClass('editor-toolbar-fullscreen').addClass('editor-toolbar');
+            $j('#container').show();
+        });
+
+        var i = 0;
+        var dragging = false;
+        $j('#dragbar').mousedown(function(e){
+            e.preventDefault();
+
+            dragging = true;
+            var main = $j('#main');
+            var ghostbar = $j('<div>',
+                {id:'ghostbar',
+                css: {
+                    height: main.outerHeight(),
+                    top: main.offset().top,
+                    left: main.offset().left
+                    }
+                }).appendTo('body');
+
+            $j(document).mousemove(function(e){
+                ghostbar.css("left",e.pageX+2);
+            });
+        });
+
+       $j(document).mouseup(function(e){
+           if (dragging)
+           {
+               if (e.pageX < 200) {
+                   $j('#sidebar').css("width",e.pageX+200);
+                   $j('#main, #editor-toolbar').css("left",e.pageX+200);
+               } else {
+                   $j('#sidebar').css("width",e.pageX+2);
+                   $j('#main, #editor-toolbar').css("left",e.pageX+2);
+               }
+               $j('#ghostbar').remove();
+               $j(document).unbind('mousemove');
+               dragging = false;
+           }
+        });
+    });
+
+</script>
+</body>
+</html>
