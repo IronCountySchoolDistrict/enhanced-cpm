@@ -27,7 +27,7 @@ angular.module('service',[]).factory('ecpmSvc', ['$rootScope', '$http', '$q', '$
             keyboard: true,
             modalFade: true,
             login: true,
-            templateUrl: '/scripts/ecpm/partials/dialogs/login.dialog.html'
+            templateUrl: '/admin/ecpm/partials/dialogs/login.dialog.html'
         };
 
         var modalOptions = {
@@ -140,7 +140,7 @@ angular.module('service',[]).factory('ecpmSvc', ['$rootScope', '$http', '$q', '$
         openAbout: function() {
             var about = new modal();
             about.show({
-                templateUrl: '/scripts/ecpm/partials/dialogs/about.dialog.html',
+                templateUrl: '/admin/ecpm/partials/dialogs/about.dialog.html',
                 login: false
             },{
                 closeButtonText: 'Close',
@@ -241,7 +241,7 @@ angular.module('service',[]).factory('ecpmSvc', ['$rootScope', '$http', '$q', '$
                             action: function() {
                                 var upload = new modal();
                                 upload.show({
-                                    templateUrl: "/scripts/ecpm/partials/dialogs/upload.dialog.html",
+                                    templateUrl: "/admin/ecpm/partials/dialogs/upload.dialog.html",
                                     login: false
                                 },{
                                     headerText: "File Upload"
