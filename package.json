@@ -1,0 +1,19 @@
+{
+  "name": "enhanced-cpm",
+  "version": "1.0.2",
+  "description": "Enhanced Custom Page Management plugin for PowerSchool",
+  "main": "",
+  "scripts": {
+    "test": "mocha-casperjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IronCountySchoolDistrict/enhanced-cpm.git"
+  },
+  "author": "IronCountySchoolDistrict",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/IronCountySchoolDistrict/enhanced-cpm/issues"
+  },
+  "homepage": "https://github.com/IronCountySchoolDistrict/enhanced-cpm#readme"
+}
