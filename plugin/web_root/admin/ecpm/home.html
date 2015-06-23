@@ -7,8 +7,8 @@
     <!-- Required style sheets: screen.css, and print.css -->
     <link href="/images/css/screen.css" rel="stylesheet" media="screen">
     <link href="/images/css/print.css" rel="stylesheet" media="print">
-    <link href="/scripts/ecpm/ext/jstree/themes/default/style.min.css" rel="stylesheet">
-    <link href="/scripts/ecpm/ext/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<!-- @echo IMAGE_SERVER_URL -->/enhanced-cpm/ext/jstree/themes/default/style.min.css" rel="stylesheet">
+    <link href="<!-- @echo IMAGE_SERVER_URL -->/enhanced-cpm/ext/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <style>
         html, body { background:#ebebeb; font-size:10px; font-family:Verdana; margin:0; padding:0; }
         #container { min-width:320px; margin:0px auto 0 auto; background:white; border-radius:0px; padding:0px; overflow:hidden; }
@@ -148,13 +148,14 @@
     <script>
         var rnd = Math.floor(Math.random()*1E10);
         require.config({
+            baseUrl: "<!-- @echo IMAGE_SERVER_URL -->",
             waitSeconds: 200,
             paths: {
-                jstree: "enhanced-cpm/js/ext/jstree/jstree",
-                angularECPM: "enhanced-cpm/js/ext/angularjs/1.2.8/angular",
-                ace: "enhanced-cpm/js/ext/ace/ace",
-                bootstrap: "enhanced-cpm/js/ext/bootstrap/js/bootstrap.min",
-                uibootstrap: "enhanced-cpm/js/ext/angular-ui/ui-bootstrap-0-10-0",
+                jstree: "enhanced-cpm/ext/jstree/jstree",
+                angularECPM: "enhanced-cpm/ext/angularjs/1.2.8/angular",
+                ace: "enhanced-cpm/ext/ace/ace",
+                bootstrap: "enhanced-cpm/ext/bootstrap/js/bootstrap.min",
+                uibootstrap: "enhanced-cpm/ext/angular-ui/ui-bootstrap-0-10-0",
                 ecpm: "enhanced-cpm/js/main"
             },
             urlArgs: "rnd=" + rnd
